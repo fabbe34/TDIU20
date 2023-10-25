@@ -1,0 +1,12 @@
+#define CATCH_CONFIG_RUNNER
+#include "catch.hpp"
+#include "SortedList.h"
+#include <iostream>
+#include <initializer_list>
+using namespace std;
+
+int main(int argc, char* argv[])
+{
+
+   return Catch::Session{}.run(argc, argv);
+}

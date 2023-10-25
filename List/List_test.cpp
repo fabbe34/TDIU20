@@ -1,0 +1,297 @@
+#include <string>
+#include <iostream>
+#include <sstream>
+#include "catch.hpp"
+#include "SortedList.h"
+using namespace std;
+TEST_CASE ("Empty List")
+{
+    SortedList t;
+    CHECK(t.Empty());
+}
+TEST_CASE ("INIT LIST")
+{
+    SortedList t{1,10,5,3};
+    CHECK(t.to_string() == "1,3,5,10");
+
+    SortedList h{1,3,1,9};
+    CHECK(h.to_string() == "1,1,3,9");
+}
+TEST_CASE ("Output operator" )
+{
+    stringstream ss;
+    SECTION("Simple output")
+    {
+         ss<< SortedList{2,5,1,6};
+        CHECK(ss.str() == "1,2,5,6");
+    }
+SECTION("Chained output")
+    {
+        ss << SortedList{23,10,32} << "---";
+        CHECK(ss.str() == "10,23,32---");
+    }
+    SECTION("Const SortedList")
+    {
+        SortedList const t{23,23,23};
+        ss << t;
+        CHECK(ss.str() == "23,23,23");
+    }
+}
+TEST_CASE ("Insert")
+{
+    SortedList t;
+    t.Insert(1);
+    CHECK(t.to_string() == "1");
+    SECTION("VALUE FROM START")
+    {
+        SortedList h{1,3,1,9};
+        h.Insert(5);
+        CHECK(h.to_string() == "1,1,3,5,9");
+        h.Insert(20);
+        CHECK(h.to_string() == "1,1,3,5,9,20");
+    }
+    
+}
+TEST_CASE ("Delete")
+{
+    SECTION("Empty List")
+    {
+        SortedList h;
+        
+        CHECK_THROWS(h.RemoveElement(3));
+    }
+     SECTION("Remove Last")
+    {
+        SortedList h{5,10,4,3,2};
+        h.RemoveElement(4);
+        CHECK(h.to_string() == "2,3,4,5");
+    }
+    SECTION("Remove First")
+    {
+        SortedList h{5,10,4,3,2};
+        h.RemoveElement(0);
+        CHECK(h.to_string() == "3,4,5,10");
+    }
+    SECTION("VALUE FROM START")
+    {
+        SortedList h{1,3,1,9};
+        h.RemoveElement(2);
+        CHECK(h.to_string() == "1,1,9");
+        h.RemoveElement(2);
+        CHECK(h.to_string() == "1,1");
+    }
+}
+TEST_CASE ("INDEX")
+{
+    SortedList t{1,10,5,3};
+    CHECK(to_string(t.Value(t.Index(0)))=="1");
+    SECTION("Throw exception")
+    {
+        SortedList L{1,10,5,3};
+    
+        CHECK_THROWS(L.Index(4));
+    }
+
+    SortedList h{1,3,1,9};
+    CHECK(to_string(h.Value(h.Index(2))) == "3");
+}
+TEST_CASE ("Left == Right")
+{
+    SECTION("LEFT == RIGHT")
+    {
+        SortedList L;
+        CHECK(L==L);
+         SortedList H{1,5,4,3};
+         CHECK(H==H);
+    }
+    SECTION("LEFT != RIGHT")
+    {
+        SortedList L;
+         SortedList H{1,5,4,3};
+         CHECK_FALSE(H==L);
+    }
+
+
+}
+TEST_CASE ("FIrst Value")
+{
+    SECTION("Empty list")
+    {
+        SortedList L;
+        CHECK_THROWS(L.First_value());
+    }
+    SECTION("Value")
+    {
+        
+         SortedList H{1,5,4,3};
+         CHECK(to_string(H.First_value())=="1");
+         SortedList L{10,4,2,3};
+         CHECK(to_string(L.First_value())=="2");    
+    }
+}
+TEST_CASE ("Last Value")
+{
+    SECTION("Empty list")
+    {
+        SortedList L;
+        CHECK_THROWS(L.Last_value());
+    }
+    SECTION("Value")
+    {
+        
+         SortedList H{1,5,4,3};
+         CHECK(to_string(H.Last_value())=="5");
+         SortedList L{10,4,2,3};
+         CHECK(to_string(L.Last_value())=="10");    
+    }
+}
+TEST_CASE ("prev Value")
+{
+    SECTION("Empty list")
+    {
+        SortedList L;
+        CHECK_THROWS(L.Prev_value(L.Index(0)));
+    }
+    SECTION("check Value")
+    {
+        
+         SortedList H{1,5,4,3};
+         CHECK(to_string(H.Prev_value(H.Index(1))) =="1"); 
+         SortedList L{10,2,9,2};
+         CHECK(to_string(L.Prev_value(L.Index(3))) =="9");  
+    }
+
+}
+
+TEST_CASE ("DEEP COPY")
+{
+   SECTION("EMPTY START LIST H{L}")
+    {
+        SortedList L{1,10,5,3};
+        
+        SortedList H{L};
+        CHECK(L.to_string()== "1,3,5,10");
+        CHECK(H.to_string() == "1,3,5,10");
+        CHECK_FALSE(H == L);
+    }
+    SECTION("EMPTY START LIST H =L")
+    {
+        SortedList L{1,10,5,3};
+        SortedList H = L;
+        CHECK(H.to_string() == "1,3,5,10");
+        CHECK_FALSE(H == L);
+	}
+    SECTION("L>H")
+    {
+      SortedList L {1,10,5,3,10};
+        SortedList H{10,4,2,100};
+        CHECK(H.to_string() == "2,4,10,100");
+        H =L ;
+        CHECK_FALSE(H == L);
+        CHECK(H.to_string() == "1,3,5,10,10");
+        CHECK(L.to_string() == "1,3,5,10,10");
+    }
+    SECTION("L <H ")
+    {
+      SortedList L{1,10,5,3};
+      SortedList H{10,4,2,100,10};
+        CHECK(H.to_string() == "2,4,10,10,100");
+        H =L ;
+        CHECK_FALSE(H == L);
+        CHECK(H.to_string() == "1,3,5,10");
+        CHECK(L.to_string() == "1,3,5,10");
+    }
+    SECTION("L =H ")
+    {
+      SortedList L{1,10,5,3};
+      SortedList H{10,4,2,100};
+        CHECK(H.to_string() == "2,4,10,100");
+        H =L ;
+        CHECK_FALSE(H == L);
+        CHECK(H.to_string() == "1,3,5,10");
+        CHECK(L.to_string() == "1,3,5,10");
+    }
+}
+
+TEST_CASE("Move")
+{
+    SECTION("EMPTY START LIST H{L}")
+    {
+        SortedList L{1,10,5,3};
+        SortedList H{move(L)};
+        CHECK(H.to_string() == "1,3,5,10");
+        CHECK(L.Empty());
+        CHECK_FALSE(H == L);
+    }
+    SECTION("EMPTY START LIST H=L")
+    {
+        SortedList L{1,10,5,3};
+        SortedList H = move(L);
+        CHECK(H.to_string() == "1,3,5,10");
+        CHECK(L.Empty());
+        CHECK_FALSE(H == L);
+    }
+    SECTION("L = H")
+    {
+        SortedList L{1,10,5,3};
+        SortedList H{10,4,2,100};
+        H =move(L) ;
+        CHECK_FALSE(H == L);
+        CHECK(H.to_string() == "1,3,5,10");
+        CHECK(L.to_string() == "2,4,10,100");
+    }
+    SECTION("L > H")
+    {
+        SortedList L{1,10,5,3,10};
+        SortedList H{10,4,2,100};
+        H =move(L) ;
+        CHECK_FALSE(H == L);
+        CHECK(H.to_string() == "1,3,5,10,10");
+        CHECK(L.to_string() == "2,4,10,100");
+    }
+    SECTION("L < H")
+    {
+        SortedList L{1,10,5,3};
+        SortedList H{10,4,2,100,5};
+        H =move(L) ;
+        CHECK_FALSE(H == L);
+        CHECK(H.to_string() == "1,3,5,10");
+        CHECK(L.to_string() == "2,4,5,10,100");
+    }
+}
+TEST_CASE("Iterator")
+{
+    SECTION("++ operator")
+    {
+    SortedList L{1,10,5,3,4,3};
+    SortedList::Iterator it{L.begin()};
+    CHECK(to_string(*it)=="1");
+    CHECK(to_string(*(++it))=="3");
+    }
+}
+TEST_CASE("Iterator --")
+{
+    SECTION("-- operator")
+    {
+      SortedList L{1,10,5,3,4,3};
+      SortedList::Iterator it{L.end()};
+      CHECK(to_string(*it)=="10");
+      CHECK(to_string(*(--it))=="5");
+    }
+}
+TEST_CASE("Full stegning")
+{
+    SECTION("++ operator")
+    {
+      SortedList L{3,20,2,9,10,15};
+      string txt{""};
+      for(SortedList::Iterator it = L.begin(); it != L.end(); ++it)
+      {
+          txt += to_string(*it);
+      }
+      CHECK(txt=="239101520");
+    }
+    
+}
+#if 0
+#endif
