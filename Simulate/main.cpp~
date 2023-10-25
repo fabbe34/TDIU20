@@ -1,0 +1,86 @@
+#include <iostream>
+#include "Krets.h"
+#include <vector>
+#include <stdexcept>
+#include <array>
+#include <iomanip>
+
+using namespace std;
+int main(int argc, char* argv[])
+{
+  double iterationer,utskrift,battery,time;
+  if(argc > 5 || argc<5 )
+  {
+    throw std::out_of_range{"Invalid nummber of arguments"};
+  }
+  else
+  {
+    try
+    {
+      iterationer = stod(argv[1]);
+      utskrift = stod(argv[2]);
+      time = stod(argv[3]);
+      battery = stod(argv[4]);
+      if(iterationer < 0 || utskrift <0 || time <0 || battery <0)
+      {
+        cout << "Negative nummber"<<endl;
+        return 1;
+      }
+    }
+    catch (std::exception& e)
+    {
+      cout <<"Invalid format Exception:"<< e.what() << endl;
+      return EXIT_FAILURE;
+    }
+    
+  }
+  cout << "----------------------------------------------------------------------"<<endl;
+  cout << "----------------------------------KRETS1------------------------------"<<endl;
+  cout << "----------------------------------------------------------------------"<<endl;
+  Net c{iterationer ,utskrift ,time};
+  c.addConnection("n");
+  c.addConnection("p");
+  c.addConnection("Q124");
+  c.addConnection("Q23");
+  c.addComponent(new Battery("Bat",battery, c("n"), c("p")));
+  c.addComponent(new resistor("R1", 6.0, c("p"), c("Q124")));
+  c.addComponent(new resistor("R2", 4.0, c("Q124"), c("Q23")));
+  c.addComponent(new resistor("R3", 8.0, c("Q23"), c("n")));
+  c.addComponent(new resistor("R4", 12.0, c("Q124"),c("n")));
+  c.simulate();
+
+  cout << "----------------------------------------------------------------------"<<endl;
+  cout << "----------------------------------KRETS2------------------------------"<<endl;
+  cout << "----------------------------------------------------------------------"<<endl;
+  cout << endl;
+  Net f{iterationer ,utskrift ,time};
+  f.addConnection("n1");
+  f.addConnection("p1");
+  f.addConnection("l");
+  f.addConnection("r");
+  f.addComponent(new Battery("Bat", battery, f("n1"),f("p1")));
+  f.addComponent(new resistor("R1", 150.0, f("p1"),f("l")));
+  f.addComponent(new resistor("R2", 50.0, f("p1"), f("r")));
+  f.addComponent(new resistor("R3", 100.0, f("r"), f("l")));
+  f.addComponent(new resistor("R4", 300.0, f("l"), f("n1")));
+  f.addComponent(new resistor("R5", 250.0, f("r"), f("n1")));
+  f.simulate();
+
+  cout << "----------------------------------------------------------------------"<<endl;
+  cout << "----------------------------------KRETS3------------------------------"<<endl;
+  cout << "----------------------------------------------------------------------"<<endl;
+  cout << endl;
+  Net q{iterationer ,utskrift ,time};
+  q.addConnection("po");
+  q.addConnection("lo");
+  q.addConnection("ro");
+  q.addConnection("no");
+  q.addComponent(new Battery("Bat",battery , q("no"), q("po")));
+  q.addComponent(new resistor("R1", 150.0, q("po"), q("lo")));
+  q.addComponent(new resistor("R2", 50.0, q("po"), q("ro")));
+  q.addComponent(new Capacitor("C3", 1.0, q("ro"), q("lo")));
+  q.addComponent(new resistor("R4", 300.0, q("lo"), q("no")));
+  q.addComponent(new Capacitor("C5", 0.75, q("ro"), q("no")));
+  q.simulate();
+  return 0;
+}
