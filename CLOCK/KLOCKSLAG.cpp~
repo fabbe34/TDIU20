@@ -1,0 +1,113 @@
+#include <iostream>
+#include "KLOCKSLAG.h"
+using namespace std;
+string UNDER_10(int n);
+CLOCK::CLOCK(int tim, int min,int sek):
+  timmar(tim),minuter(min),sekunder(sek)
+{
+  //FELHANTERING SKA LIGGA HÄR
+}
+string CLOCK::S24H()
+{
+  return UNDER_10(timmar)+":"+UNDER_10(minuter)+":"+UNDER_10(sekunder);
+}
+string UNDER_10(int n)
+{
+  if (n <10)
+    {
+      return "0"+to_string(n);
+    }
+  else
+    {
+      return to_string(n);
+    }
+}
+string CLOCK::S12H()
+{
+  if(timmar>12)
+    {
+      return UNDER_10(timmar-12)+":"+UNDER_10(minuter)+":"+UNDER_10(sekunder);
+    }
+  else
+    {
+      return  UNDER_10(timmar)+":"+UNDER_10(minuter)+":"+UNDER_10(sekunder);
+    }
+}
+CLOCK CLOCK::ADD_N(int n)
+{
+  for(int i = 0; i<n; i++)
+    {
+      INCREMENT();
+    }
+}
+CLOCK CLOCK::SUB_N(int n )
+{
+  for(int i =0; i<n; i++)
+    {
+      DECREMENT();
+    }
+}
+CLOCK CLOCK::INCREMENT()
+{
+  
+   sekunder+=1;
+   if(sekunder ==60)
+     {
+       sekunder = 1;
+       minuter +=1;
+       if(minuter ==60)
+	 {
+	   minuter = 1;
+	   timmar += 1;
+	   if(timmar == 24)
+	     {
+	       timmar =0;
+	     }
+	 }
+     }
+ 
+   
+}
+CLOCK CLOCK::DECREMENT()
+{
+  sekunder-=1;
+  if(sekunder==0)
+    {
+      sekunder = 59;
+      minuter -= 1;
+      if(minuter==0)
+	{
+	  minuter= 59;
+	  timmar -= 1;
+	  if(timmar ==0)
+	    {
+	      timmar = 24;
+	    }
+	}  
+    }
+}
+int CLOCK::hour()
+{
+  return timmar;
+}
+int CLOCK::minute()
+{
+  return minuter;
+}
+int CLOCK::seconds()
+{
+  return sekunder;
+}
+bool CLOCK::after_lunch()
+{
+  if(timmar >=12)
+    {
+      return true;
+    }
+  else
+    {
+      return false;
+    }
+}
+
+

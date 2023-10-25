@@ -1,0 +1,23 @@
+
+#include <iostream>
+#include <string>
+using namespace std;
+class CLOCK {
+private:
+   int timmar;
+   int minuter;
+   int sekunder;
+
+public:
+  CLOCK(int tim, int min,int sek);
+  string S24H();
+  string S12H();
+  CLOCK ADD_N(int n); 
+  CLOCK SUB_N(int n);
+  CLOCK INCREMENT();
+  CLOCK DECREMENT();
+  int hour();
+  int minute();
+  int seconds();
+  bool after_lunch();
+};

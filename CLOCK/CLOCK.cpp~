@@ -1,0 +1,24 @@
+#include <iostream>
+#include "KLOCKSLAG.h"
+using namespace std;   
+int main()
+{
+  CLOCK TEST(12,3,1);
+  CLOCK TEST3(15,10,1);
+  string test1 = TEST.S24H();
+  cout << test1<<endl;
+ 
+  TEST.DECREMENT();
+  string test2 = TEST.S12H();
+  cout << test2<<endl;
+  cout<< TEST.hour()<<"----"<<TEST.minute() << "-----"<<TEST.seconds()<<endl;
+  if(TEST.after_lunch())
+    {
+      cout <<"KLOCKAN ÄR EFTER 12"<<endl;
+    }
+  else
+    {
+      cout <<"KLOCKAN ÄR inte EFTER 12"<<endl;
+    }
+
+}
